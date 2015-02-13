@@ -49,13 +49,10 @@ MeshShape::MeshShape(Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_
   static uint32_t count = 0;
   manual_object_ = scene_manager->createManualObject("MeshShape_ManualObject" + boost::lexical_cast<std::string>(count++)); 
   material_->setCullingMode(Ogre::CULL_NONE);
-  //std::cerr<<"CREATE >> "<<manual_object_->getName()<<std::endl;
 }
 
 MeshShape::~MeshShape()
 {
-  //std::cerr<<"DESTROY >> "<<manual_object_->getName()<<std::endl;
-
   clear();
   scene_manager_->destroyManualObject(manual_object_);
 }
