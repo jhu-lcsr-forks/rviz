@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Willow Garage, Inc.
+ * Copyright (c) 2008, Willow Garage, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,49 +27,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RVIZ_MESH_RESOURCE_MARKER_H
-#define RVIZ_MESH_RESOURCE_MARKER_H
+#ifndef RVIZ_RELATIVE_HUMIDITY_DISPLAY_H
+#define RVIZ_RELATIVE_HUMIDITY_DISPLAY_H
 
-#include "marker_base.h"
+#include <sensor_msgs/RelativeHumidity.h>
+#include <sensor_msgs/PointCloud2.h>
 
-#include <OgreMaterial.h>
-
-#include <vector>
-
-namespace Ogre
-{
-class SceneNode;
-class Entity;
-}
+#include "rviz/message_filter_display.h"
 
 namespace rviz
 {
 
-class MeshResourceMarker : public MarkerBase
-{
-public:
-  MeshResourceMarker(MarkerDisplay* owner, DisplayContext* context, Ogre::SceneNode* parent_node);
-  ~MeshResourceMarker();
+class IntProperty;
+class PointCloudCommon;
 
-  virtual S_MaterialPtr getMaterials();
+/**
+ * \class RelativeHumidityDisplay
+ * \brief Displays a RelativeHumidity message of type sensor_msgs::RelativeHumidity
+ *
+ */
+class RelativeHumidityDisplay: public MessageFilterDisplay<sensor_msgs::RelativeHumidity>
+{
+Q_OBJECT
+public:
+  RelativeHumidityDisplay();
+  ~RelativeHumidityDisplay();
+
+  virtual void reset();
+
+  virtual void update( float wall_dt, float ros_dt );
+
+private Q_SLOTS:
+  void updateQueueSize();
 
 protected:
-  virtual void onNewMessage(const MarkerConstPtr& old_message, const MarkerConstPtr& new_message);
+  /** @brief Do initialization. Overridden from MessageFilterDisplay. */
+  virtual void onInitialize();
 
-  void reset();
+  /** @brief Process a single message.  Overridden from MessageFilterDisplay. */
+  virtual void processMessage( const sensor_msgs::RelativeHumidityConstPtr& msg );
 
-  Ogre::Entity* entity_;
-  S_MaterialPtr materials_;
+  IntProperty* queue_size_property_;
 
-  //! Scaling factor to convert units. Currently relevant for Collada only.
-  float unit_rescale_;
-
-  //! list of passes created for adding color tint to the mesh
-  std::vector<Ogre::Pass*> color_tint_passes_;
+  PointCloudCommon* point_cloud_common_;
 };
 
-}
+} // namespace rviz
 
-#endif // RVIZ_MESH_RESOURCE_MARKER_H
-
-
+#endif
