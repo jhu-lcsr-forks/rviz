@@ -29,6 +29,7 @@
 
 #include "mesh_shape.h"
 
+#include <OgreMeshManager.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreEntity.h>
@@ -48,17 +49,14 @@ MeshShape::MeshShape(Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_
   static uint32_t count = 0;
   manual_object_ = scene_manager->createManualObject("MeshShape_ManualObject" + boost::lexical_cast<std::string>(count++)); 
   material_->setCullingMode(Ogre::CULL_NONE);
+  //std::cerr<<"CREATE >> "<<manual_object_->getName()<<std::endl;
 }
 
 MeshShape::~MeshShape()
 {
-  // destroy the entity first
-  if (entity_)
-  {
-    entity_->detachFromParent();
-    scene_manager_->destroyEntity( entity_ );
-    entity_ = NULL;
-  }
+  //std::cerr<<"DESTROY >> "<<manual_object_->getName()<<std::endl;
+
+  clear();
   scene_manager_->destroyManualObject(manual_object_);
 }
 
@@ -145,6 +143,8 @@ void MeshShape::clear()
 {
   if (entity_)
   {
+    entity_->detachFromParent();
+    Ogre::MeshManager::getSingleton().remove(entity_->getMesh()->getName());
     scene_manager_->destroyEntity( entity_ );
     entity_ = NULL;
   }
