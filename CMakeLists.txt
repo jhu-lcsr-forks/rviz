@@ -62,7 +62,7 @@ endif()
 
 find_package(OpenGL REQUIRED)
 
-find_package(PythonLibs REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 
 find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGL)
 
