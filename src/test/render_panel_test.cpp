@@ -33,8 +33,7 @@
 
 #include "rviz/visualization_manager.h"
 #include "rviz/render_panel.h"
-#include "rviz/displays_panel.h"
-#include "rviz/properties/property_manager.h"
+//#include "rviz/displays_panel.h"
 
 using namespace rviz;
 

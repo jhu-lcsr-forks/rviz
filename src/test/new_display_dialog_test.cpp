@@ -31,7 +31,12 @@
 
 #include <QApplication>
 
+#include <pluginlib/class_loader.h>
+
+#include "rviz/display.h"
 #include "rviz/new_object_dialog.h"
+
+typedef std::set<std::string> S_string;
 
 int main( int argc, char **argv )
 {
@@ -40,7 +45,7 @@ int main( int argc, char **argv )
   std::string lookup_name;
   std::string display_name;
   pluginlib::ClassLoader<rviz::Display>* class_loader = new pluginlib::ClassLoader<rviz::Display>( "rviz", "rviz::Display" );
-  rviz::S_string current_names;
+  S_string current_names;
   current_names.insert( "Chub" );
   current_names.insert( "Town" );
   rviz::NewObjectDialog* dialog = new rviz::NewObjectDialog( class_loader, "Display", current_names, &lookup_name, &display_name );

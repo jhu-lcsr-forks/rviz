@@ -91,9 +91,9 @@ target_link_libraries(render_panel_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES}
 add_dependencies(tests render_panel_test)
 
 # This is an executable which uses the rviz new display diaglog interface.
-add_executable(new_display_dialog_test new_display_dialog_test.cpp)
-target_link_libraries(new_display_dialog_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
-add_dependencies(tests new_display_dialog_test)
+#add_executable(new_display_dialog_test new_display_dialog_test.cpp)
+#target_link_libraries(new_display_dialog_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+#add_dependencies(tests new_display_dialog_test)
 
 # This is an executable which uses the rviz color editor test.
 add_executable(color_editor_test color_editor_test.cpp)
