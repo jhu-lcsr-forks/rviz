@@ -85,56 +85,70 @@ add_executable(send_grid_cells EXCLUDE_FROM_ALL send_grid_cells_node.cpp)
 target_link_libraries(send_grid_cells ${catkin_LIBRARIES} ${urdfdom_LIBRARIES})
 add_dependencies(tests send_grid_cells)
 
-##   ## rosbuild_add_executable(vis_panel_example vis_panel_example.cpp)
-##   ## target_link_libraries(vis_panel_example ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(vis_panel_example)
-##   ## 
-##   ## rosbuild_add_executable(render_panel_test render_panel_test.cpp)
-##   ## target_link_libraries(render_panel_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(render_panel_test)
-##   ## 
-##   ## rosbuild_add_executable(new_display_dialog_test new_display_dialog_test.cpp)
-##   ## target_link_libraries(new_display_dialog_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(new_display_dialog_test)
-##   ## 
-##   ## rosbuild_add_executable(color_editor_test color_editor_test.cpp)
-##   ## target_link_libraries(color_editor_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(color_editor_test)
-##   ## 
-##   ## qt4_wrap_cpp(PROPERTY_TEST_MOC_FILES
-##   ##   ros_spinner.h
-##   ##   )
-##   ## rosbuild_add_executable(property_test property_test.cpp ros_spinner.cpp ${PROPERTY_TEST_MOC_FILES})
-##   ## target_link_libraries(property_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(property_test)
-##   ## 
-##   ## rosbuild_add_gtest(topic_info_variant_test topic_info_variant_test.cpp)
-##   ## target_link_libraries(topic_info_variant_test ${QT_LIBRARIES})
-##   ## 
-##   ## rosbuild_add_executable(line_edit_with_button_test line_edit_with_button_test.cpp)
-##   ## target_link_libraries(line_edit_with_button_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(line_edit_with_button_test)
-##   ## 
-##   ## rosbuild_add_executable(topic_dialog_test topic_dialog_test.cpp)
-##   ## target_link_libraries(topic_dialog_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(topic_dialog_test)
-##   ## 
-##   ## qt4_wrap_cpp(MOC_FILES
-##   ##   connect_test.h
-##   ##   )
-##   ## rosbuild_add_executable(connect_test connect_test.cpp ${MOC_FILES})
-##   ## target_link_libraries(connect_test ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(connect_test)
-##   ## 
-##   ## rosbuild_add_gtest(config_test config_test.cpp ../rviz/uniform_string_stream.cpp ../rviz/config.cpp)
-##   ## 
-##   ## qt4_wrap_cpp(RENDER_POINTS_TEST_MOC_FILES
-##   ##   render_points_test.h
-##   ##   )
-##   ## rosbuild_add_executable(render_points_test render_points_test.cpp ../rviz/ogre_helpers/orbit_camera.cpp ${RENDER_POINTS_TEST_MOC_FILES})
-##   ## target_link_libraries(render_points_test ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(render_points_test)
-##   ## 
-##   ## rosbuild_add_executable(two_render_widgets two_render_widgets.cpp)
-##   ## target_link_libraries(two_render_widgets ${PROJECT_NAME} ${QT_LIBRARIES})
-##   ## rosbuild_declare_test(two_render_widgets)
+# This is a test program that uses the rviz panel interface.
+add_executable(render_panel_test render_panel_test.cpp)
+target_link_libraries(render_panel_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests render_panel_test)
+
+# This is an executable which uses the rviz new display diaglog interface.
+add_executable(new_display_dialog_test new_display_dialog_test.cpp)
+target_link_libraries(new_display_dialog_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests new_display_dialog_test)
+
+# This is an executable which uses the rviz color editor test.
+add_executable(color_editor_test color_editor_test.cpp)
+target_link_libraries(color_editor_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests color_editor_test)
+
+# This is a modified version of the property test.
+qt4_wrap_cpp(PROPERTY_TEST_MOC_FILES
+  ros_spinner.h
+)
+catkin_add_gtest(property_with_ros_spinner_test
+  property_test.cpp
+  ros_spinner.cpp
+  mock_property_change_receiver.cpp
+  ${PROPERTY_TEST_MOC_FILES}
+  ${MOC_MOCK_PROPERTY_CHANGE_RECEIVER}
+)
+target_link_libraries(property_with_ros_spinner_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests property_with_ros_spinner_test)
+
+# This is an executable that uses the line_edit_with_button property interface.
+add_executable(line_edit_with_button_test line_edit_with_button_test.cpp)
+target_link_libraries(line_edit_with_button_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests line_edit_with_button_test)
+
+# This is an executable which tests the connect/disconnect behavior of signals and slots in Qt.
+qt4_wrap_cpp(MOC_FILES
+  connect_test.h
+)
+add_executable(connect_test connect_test.cpp ${MOC_FILES})
+target_link_libraries(connect_test ${QT_LIBRARIES})
+add_dependencies(tests connect_test)
+
+# This is a GTest which tests the display configuration.
+catkin_add_gtest(config_test config_test.cpp ../rviz/uniform_string_stream.cpp ../rviz/config.cpp)
+target_link_libraries(config_test ${QT_LIBRARIES})
+
+# This is an acceptance test executable which renders points.
+qt4_wrap_cpp(RENDER_POINTS_TEST_MOC_FILES
+  render_points_test.h
+)
+add_executable(render_points_test
+  render_points_test.cpp
+  ../rviz/ogre_helpers/orbit_camera.cpp
+  ${RENDER_POINTS_TEST_MOC_FILES}
+)
+target_link_libraries(render_points_test rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests render_points_test)
+
+# This is an example application which creates two ogre render windows.
+add_executable(two_render_widgets two_render_widgets.cpp)
+target_link_libraries(two_render_widgets rviz ${catkin_LIBRARIES} ${QT_LIBRARIES})
+add_dependencies(tests two_render_widgets)
+
+# This is a GTest which tests the STL loader
+catkin_add_gtest(stl_loader_test stl_loader_test.cpp
+  ../rviz/ogre_helpers/stl_loader.cpp)
+target_link_libraries(stl_loader_test ${catkin_LIBRARIES} OgreMain)
