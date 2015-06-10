@@ -196,6 +196,7 @@ void CameraDisplay::onInitialize()
   updateAlpha();
 
   render_panel_ = new RenderPanel();
+  render_panel_->enableStereo(false);
   render_panel_->getRenderWindow()->addListener( this );
   render_panel_->getRenderWindow()->setAutoUpdated(false);
   render_panel_->getRenderWindow()->setActive( false );

@@ -111,8 +111,10 @@ void QtOgreRenderWindow::setupStereo()
 
     setOverlaysEnabled(overlays_enabled_);
     setBackgroundColor(background_color_);
-    if (camera_)
-      setCamera(camera_);
+
+    if (camera_) {
+      this->setCamera(camera_);
+    }
 
     // addListener causes preViewportUpdate() to be called when rendering.
     render_window_->addListener(this);
@@ -156,13 +158,15 @@ void QtOgreRenderWindow::preViewportUpdate(
       return;
     }
 
-    Ogre::Vector3 newpos = pos
-                           + right * offset.x
-                           + up * offset.y;
+    if(!right_camera_->isCustomProjectionMatrixEnabled()) {
+      Ogre::Vector3 newpos = pos
+                             + right * offset.x
+                             + up * offset.y;
 
-    right_camera_->synchroniseBaseSettingsWith(camera_);
-    right_camera_->setFrustumOffset(-offset);
-    right_camera_->setPosition(newpos);
+      right_camera_->synchroniseBaseSettingsWith(camera_);
+      right_camera_->setFrustumOffset(-offset);
+      right_camera_->setPosition(newpos);
+    }
     viewport->setCamera(right_camera_);
   }
   else if (viewport == viewport_)
@@ -173,13 +177,15 @@ void QtOgreRenderWindow::preViewportUpdate(
       return;
     }
 
-    Ogre::Vector3 newpos = pos
-                           - right * offset.x
-                           - up * offset.y;
-    
-    left_camera_->synchroniseBaseSettingsWith(camera_);
-    left_camera_->setFrustumOffset(offset);
-    left_camera_->setPosition(newpos);
+    if(!left_camera_->isCustomProjectionMatrixEnabled()) {
+      Ogre::Vector3 newpos = pos
+                             - right * offset.x
+                             - up * offset.y;
+      
+      left_camera_->synchroniseBaseSettingsWith(camera_);
+      left_camera_->setFrustumOffset(offset);
+      left_camera_->setPosition(newpos);
+    }
     viewport->setCamera(left_camera_);
   }
   else
@@ -220,21 +226,29 @@ Ogre::Viewport* QtOgreRenderWindow::getViewport () const
 
 void QtOgreRenderWindow::setCamera( Ogre::Camera* camera )
 {
-  if (camera)
-  {
+  // Destroy sub-cameras if they exist
+  if(left_camera_) {
+    left_camera_->getSceneManager()->destroyCamera(left_camera_);
+    left_camera_ = NULL;
+  }
+  if (right_camera_) {
+    right_camera_->getSceneManager()->destroyCamera(right_camera_);
+    right_camera_ = NULL;
+  }
+
+  if (camera) {
+    std::cerr<<"Setting "<<((rendering_stereo_)?("stereo"):("mono"))<<" camera to: \""<<camera->getName()<<"\""<<std::endl;
+
     camera_ = camera;
     viewport_->setCamera( camera );
 
-    setCameraAspectRatio();
-
-    if (camera_ && rendering_stereo_ && !left_camera_)
-    {
+    // Create sub-cameras based on the given camera
+    if (camera_ && rendering_stereo_) {
       left_camera_ = camera_->getSceneManager()->createCamera(camera_->getName() + "-left");
-    }
-    if (camera_ && rendering_stereo_ && !right_camera_)
-    {
       right_camera_ = camera_->getSceneManager()->createCamera(camera_->getName() + "-right");
     }
+
+    setCameraAspectRatio();
 
     update();
   }
