@@ -35,8 +35,11 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
+#include <OgreSceneNode.h>
+#include <OgreCamera.h>
 #include <OgreRenderWindow.h>
 #include <OgreEntity.h>
+#include <OgreViewport.h>
 
 using namespace rviz;
 
